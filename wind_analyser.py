@@ -32,6 +32,7 @@ def delete_nulls_in_csv():  #original csv file contains null element because of 
      
 def main():
     data = []
+    # the CSV log is stored in UTF-16 with tab separated columns
     with open('meteo.csv', newline='', encoding='utf-16') as csvfile:
         reader = csv.reader(csvfile, delimiter='\t')
         for row in reader:
@@ -46,15 +47,17 @@ def main():
     max_data_wind_direction = 0
     #print(len(wind_list))
        
-    for j in range (0, len(data)):
-        splitted_line = [x.strip() for x in data[j]]
+
+    for j in range(0, len(data)):
+        splitted_line = data[j]  # row is already split into columns
         try:
-            #get direction as a number from column 11:
+            # get direction as a number from column 11
             direction = int(direction_names[splitted_line[11]])
-            #get wind speed from column 9:
+            # get wind speed from column 9
             speed = float(splitted_line[9])
-            mean_speed += speed #integrate all speed values
-            #get wind speed from column 10:
+            mean_speed += speed  # integrate all speed values
+            # get gust speed from column 10
+
             gust = float(splitted_line[10])
             #search for maximal speed:
             if (speed>max_data_wind):
@@ -145,8 +148,10 @@ def main():
     plt.text(-max_data_gust+1, -0.5, 'W', fontsize=15, color = 'tab:gray')
     plt.text(max_data_gust-2, -0.5, 'E', fontsize=15, color = 'tab:gray')
     
-    plt.subplots_adjust(right = 1.8, top = 1.05) #set size for plots    
-    
+    plt.subplots_adjust(right = 1.8, top = 1.05) #set size for plots
+
+    # Save the resulting figure to a file so it can be viewed later
+    plt.savefig('wind_rose.png')
     plt.show()
   
 #------------------------------------------------------------------------------------------------
