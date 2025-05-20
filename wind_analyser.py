@@ -6,6 +6,7 @@ import csv
 import numpy as np
 import math
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Wedge
 import matplotlib.pyplot as plt
 
 
@@ -24,18 +25,17 @@ def delete_nulls_in_csv():  #original csv file contains null element because of 
     next(fi) #skip header
     data = fi.read()
     fi.close()
-    fo = open('mynew2.csv', 'wb')
+    fo = open('meteo.csv', 'wb')
     fo.write(data.replace(b'\x00', b''))
     fo.close()
 #################################################################################################
      
 def main():
-    delete_nulls_in_csv()
     data = []
-    with open('mynew2.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile)    
+    with open('meteo.csv', newline='', encoding='utf-16') as csvfile:
+        reader = csv.reader(csvfile, delimiter='\t')
         for row in reader:
-            data.append(row) 
+            data.append(row)
            
     wind_list = [[0 for x in range(maxwind10)] for y in range(16)]
     gust_list = [[0 for x in range(maxwind10)] for y in range(16)]
@@ -47,15 +47,15 @@ def main():
     #print(len(wind_list))
        
     for j in range (0, len(data)):
-        splitted_line = data[j][0].split() #split each row in csv file into words
+        splitted_line = [x.strip() for x in data[j]]
         try:
-            #get direction as a number from column 13:
-            direction = int(direction_names[splitted_line[13]]) 
-            #get wind speed from column 11:
-            speed = (float(splitted_line[11]))
+            #get direction as a number from column 11:
+            direction = int(direction_names[splitted_line[11]])
+            #get wind speed from column 9:
+            speed = float(splitted_line[9])
             mean_speed += speed #integrate all speed values
-            #get wind speed from column 12:
-            gust = (float(splitted_line[12]))
+            #get wind speed from column 10:
+            gust = float(splitted_line[10])
             #search for maximal speed:
             if (speed>max_data_wind):
                     max_data_wind = speed
@@ -91,10 +91,10 @@ def main():
                 colors2.append(math.log(gust_list[direction][speed],10))
     
     #Creating a circular frame:
-    patches.append(Wedge((.0, .0), max_data_wind*2, 0, 360, max_data_wind, label = 'fdg'),)
+    patches.append(Wedge((.0, .0), max_data_wind*2, 0, 360, width=max_data_wind, label='fdg'))
     colors.append(max(colors))
     #Creating a circular frame:
-    patches2.append(Wedge((.0, .0), max_data_gust*2, 0, 360, max_data_gust, label = 'fdg'),)
+    patches2.append(Wedge((.0, .0), max_data_gust*2, 0, 360, width=max_data_gust, label='fdg'))
     colors2.append(max(colors2))
     
 #---------------------------------------------------------------------------------------------
