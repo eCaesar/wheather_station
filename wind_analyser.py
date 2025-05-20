@@ -47,6 +47,7 @@ def main():
     max_data_wind_direction = 0
     #print(len(wind_list))
        
+
     for j in range(0, len(data)):
         splitted_line = data[j]  # row is already split into columns
         try:
@@ -56,6 +57,7 @@ def main():
             speed = float(splitted_line[9])
             mean_speed += speed  # integrate all speed values
             # get gust speed from column 10
+
             gust = float(splitted_line[10])
             #search for maximal speed:
             if (speed>max_data_wind):
